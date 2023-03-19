@@ -19,7 +19,7 @@ export class UserContorller extends BaseController implements IUserController {
 	}
 
 	login(req: Request, res: Response, next: NextFunction): void {
-		console.log('dsa');
+		console.log('ds2a');
 		next(new HTTPError(401, 'Ошибка авторазации', 'login'));
 	}
 
