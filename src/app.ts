@@ -4,7 +4,8 @@ import { inject, injectable } from 'inversify';
 import { ExeptionFilter } from './errors/exeption.filter';
 import { ILogger } from './logger/logger.interface';
 import { TYPES } from './types';
-import { UserContorller } from './users/users.controller';
+import { UserController } from './users/users.controller';
+import { json } from 'body-parser';
 import 'reflect-metadata';
 
 @injectable()
@@ -15,11 +16,15 @@ export class App {
 
 	constructor(
 		@inject(TYPES.ILogger) private logger: ILogger,
-		@inject(TYPES.UserController) private userController: UserContorller,
+		@inject(TYPES.UserController) private userController: UserController,
 		@inject(TYPES.ExeptionFilter) private exeptionFilter: ExeptionFilter,
 	) {
 		this.app = express();
 		this.port = 8000;
+	}
+
+	useMiddleware(): void {
+		this.app.use(json());
 	}
 
 	useRoutes(): void {
@@ -31,6 +36,7 @@ export class App {
 	}
 
 	public async init(): Promise<void> {
+		this.useMiddleware();
 		this.useRoutes();
 		this.useExeptionFilters();
 		this.server = this.app.listen(this.port);
