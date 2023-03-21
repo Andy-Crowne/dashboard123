@@ -1,12 +1,14 @@
 import express, { Express } from 'express';
 import { Server } from 'http';
 import { inject, injectable } from 'inversify';
-import { ExeptionFilter } from './errors/exeption.filter';
 import { ILogger } from './logger/logger.interface';
 import { TYPES } from './types';
-import { UserController } from './users/users.controller';
 import { json } from 'body-parser';
 import 'reflect-metadata';
+import { IConfigService } from './config/config.service.interface';
+import { IUserController } from './users/users.controller.interface';
+import { IExeptionFilter } from './errors/exeption.filter.interface';
+import { UserController } from './users/users.controller';
 
 @injectable()
 export class App {
@@ -17,7 +19,8 @@ export class App {
 	constructor(
 		@inject(TYPES.ILogger) private logger: ILogger,
 		@inject(TYPES.UserController) private userController: UserController,
-		@inject(TYPES.ExeptionFilter) private exeptionFilter: ExeptionFilter,
+		@inject(TYPES.ExeptionFilter) private exeptionFilter: IExeptionFilter,
+		@inject(TYPES.ConfigService) private configService: IConfigService,
 	) {
 		this.app = express();
 		this.port = 8000;
@@ -40,6 +43,6 @@ export class App {
 		this.useRoutes();
 		this.useExeptionFilters();
 		this.server = this.app.listen(this.port);
-		this.logger.log(`Сервер запущен на "http://localhost:${this.port}"`);
+		this.logger.log(`[Server] Сервер запущен на "http://localhost:${this.port}"`);
 	}
 }
